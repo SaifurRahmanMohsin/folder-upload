@@ -14,22 +14,39 @@
               border: 5px dashed;
               margin: 1em;
               text-align: center;
+              cursor: pointer;
             }
         </style>
     </head>
     <body>
         <div class="flex-center position-ref full-height">
             <div class="content card-body card-block">
-                <div id="dropzone"><br><br><span>Drop your folders here.</span></div>
+                <div id="dropzone">
+                  <br><br><span>Drop your folders here.</span>
+                  <input id="clickablefileinput" type="file" style="display:none" webkitdirectory />
+                </div>
             </div>
         </div>
 
         <script>
             var dropzone = document.getElementById("dropzone");
+            var dropzoneFallback = document.getElementById("clickablefileinput");
+
+            dropzone.addEventListener("click", function(e) {
+                dropzoneFallback.click();
+            });
+
+            dropzoneFallback.addEventListener("change", function(event) {
+                var items = event.target.files;
+                for (var i = 0; i < items.length; i++) {
+                    sendfile(items[i].webkitRelativePath, items[i]);
+                }
+            }, false);
 
             dropzone.addEventListener("drop", function(e) {
               e.stopPropagation();
               e.preventDefault();
+
               var items = event.dataTransfer.items;
               for (var i = 0; i < items.length; i++) {
                 var entry = items[i].webkitGetAsEntry();
